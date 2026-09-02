@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FM Games Remastered</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0f1020;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background-color: #1b1c3a;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #e94560;
+        }
+        h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #e94560;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .game-btn {
+            background-color: #2e305f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .game-btn:hover, .game-btn.active {
+            background-color: #e94560;
+        }
+        .external-btn {
+            background-color: #0fff95;
+            color: #0f1020;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        #main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #000;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .notice {
+            position: absolute;
+            bottom: 10px;
+            background: rgba(27, 28, 58, 0.9);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #a2a8d3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎮 FM Games Remastered</h1>
+        <div class="nav-links">
+            <button class="game-btn active" onclick="switchGame('polytrack')">Polytrack</button>
+            <button class="game-btn" onclick="switchGame('eaglercraft')">Eaglercraft 1.8</button>
+            <button class="game-btn" onclick="switchGame('retro')">Pixel Catcher</button>
+            <a id="external-link" href="https://ringthebell02.github.io/new-polytrack/" target="_blank" class="external-btn">Launch Fullscreen ↗</a>
+        </div>
+    </header>
+
+    <div id="main-container">
+        <iframe id="game-frame" src="https://ringthebell02.github.io/new-polytrack/" allowfullscreen></iframe>
+        <div class="notice">If a game frame stays blank due to network filters, click "Launch Fullscreen".</div>
+    </div>
+
+    <script>
+        function switchGame(type) {
+            const frame = document.getElementById('game-frame');
+            const extLink = document.getElementById('external-link');
+            const buttons = document.querySelectorAll('.game-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (type === 'polytrack') {
+                frame.removeAttribute('srcdoc');
+                frame.src = "https://ringthebell02.github.io/new-polytrack/";
+                extLink.href = "https://ringthebell02.github.io/new-polytrack/";
+                extLink.style.display = "inline-block";
+            } else if (type === 'eaglercraft') {
+                frame.removeAttribute('srcdoc');
+                frame.src = "https://smapskajendfjshwbekf-prog.github.io/eaglercraft/";
+                extLink.href = "https://smapskajendfjshwbekf-prog.github.io/eaglercraft/";
+                extLink.style.display = "inline-block";
+            } else if (type === 'retro') {
+                frame.removeAttribute('src');
+                extLink.style.display = "none";
+                frame.srcdoc = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { background: #1a1a2e; color: white; text-align: center; font-family: sans-serif; padding-top: 40px; }
+                            #game-container { position: relative; width: 380px; height: 380px; background: #16213e; border: 3px solid #e94560; margin: 15px auto; overflow: hidden; border-radius: 6px; }
+                            #player { position: absolute; bottom: 20px; left: 150px; width: 80px; height: 14px; background: #e94560; border-radius: 4px; }
+                            #ball { position: absolute; top: 0px; left: 170px; width: 18px; height: 18px; background: #0fff95; border-radius: 50%; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Pixel Catcher Classic</h2>
+                        <p>Use Left/Right Arrow keys to play!</p>
+                        <h3>Score: <span id="score">0</span></h3>
+                        <div id="game-container">
+                            <div id="player"></div>
+                            <div id="ball"></div>
+                        </div>
+                        <script>
+                            let px = 150, bx = 170, by = 0, score = 0;
+                            document.addEventListener('keydown', e => {
+                                if(e.key === 'ArrowLeft' && px > 0) px -= 25;
+                                if(e.key === 'ArrowRight' && px < 300) px += 25;
+                                document.getElementById('player').style.left = px + 'px';
+                            });
+                            setInterval(() => {
+                                by += 4;
+                                if(by >= 345 && by <= 360 && bx + 18 >= px && bx <= px + 80) {
+                                    score++; document.getElementById('score').textContent = score;
+                                    by = 0; bx = Math.floor(Math.random() * 340);
+                                }
+                                if(by >= 380) { by = 0; bx = Math.floor(Math.random() * 340); }
+                                document.getElementById('ball').style.top = by + 'px';
+                                document.getElementById('ball').style.left = bx + 'px';
+                            }, 20);
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
